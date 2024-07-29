@@ -3,11 +3,10 @@ const bcrypt = require('bcrypt');
 const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
+const myEventEmitter = require('../services/logEvents.js');
 
 // const { addLogin, getLoginByUsername } = require('../services/p.auth.dal')
 const { addLogin, getLoginByUsername } = require('../services/m.auth.dal')
-
-router.use(express.static('public'));
 
 router.get('/', async (req, res) => {
     if(DEBUG) console.log('login page: ');
@@ -33,6 +32,7 @@ router.post('/', async (req, res) => {
                 console.log(`curl -d "password=xxxxx" -H "Authorization: Bearer ${token}" -X POST http://localhost:3000/api/auth/${user._id}`);
                 console.log(`curl -H "Authorization: Bearer ${token}" -X DELETE http://localhost:3000/api/auth/${user._id}`);
             }
+            myEventEmitter.emit('event', 'auth.post', 'SUCCESS', `User ${user.username} logged in successfully.`);
             req.session.user = user;
             req.session.token = token;
             req.session.status = 'Happy for your return ' + user.username;
@@ -126,4 +126,4 @@ router.get('/exit', async (req, res) => {
     });
 });
 
-module.exports = router
+module.exports = router;

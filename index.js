@@ -19,7 +19,7 @@ const myEventEmitter = require('./services/logEvents.js');
 
 app.listen(PORT, (err) => {
     if (err) console.log(err);
-    myEventEmitter.emit('event', 'app.listen', 'INFO', 'http search site successfully started.');
+    myEventEmitter.emit('event', 'app.listen', 'SUCCESS', 'http search site successfully started.');
     console.log(`Simple app running on port ${PORT}.`)
 });
 
@@ -33,12 +33,10 @@ app.get('/about', async (req, res) => {
     res.render('about', {status: req.session.status});
 });
 
-app.get('/search', async (req, res) => {
-    myEventEmitter.emit('event', 'app.get /search', 'INFO', 'search page (search.ejs) was displayed.');
-    res.render('search', {status: req.session.status});
-});
+const searchRouter = require('./routes/search');
+app.use('/search', searchRouter);
 
-const authRouter = require('./routes/auth')
+const authRouter = require('./routes/auth');
 app.use("/auth", authRouter);
 
 // // anything beginning with "/api" will go into this
