@@ -24,11 +24,18 @@ app.listen(PORT, (err) => {
 });
 
 app.get('/', async (req, res) => {
+    myEventEmitter.emit('event', 'app.get', 'INFO', 'landing page (index.ejs) was displayed.');
     res.render('index', {status: req.session.status});
 });
 
 app.get('/about', async (req, res) => {
+    myEventEmitter.emit('event', 'app.get /about', 'INFO', 'about page (about.ejs) was displayed.');
     res.render('about', {status: req.session.status});
+});
+
+app.get('/search', async (req, res) => {
+    myEventEmitter.emit('event', 'app.get /search', 'INFO', 'search page (search.ejs) was displayed.');
+    res.render('search', {status: req.session.status});
 });
 
 const authRouter = require('./routes/auth')
