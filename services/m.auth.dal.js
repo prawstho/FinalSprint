@@ -14,7 +14,9 @@ async function getLogins() {
 async function getLoginByUsername(name) {
   try {
     await dal.connect();
+    // const result = await dal.db("Author").collection("logins").findOne({"username": name});
     const result = dal.db("Auth").collection("logins").findOne({"username": name});
+    if(DEBUG) console.log('m.auth.dal.getLoginByUsername(): ' + result);
     return result;
   } catch(error) {
     console.log(error);
