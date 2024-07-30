@@ -1,5 +1,5 @@
-CREATE TABLE automobiles (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE autos (
+    auto_id SERIAL PRIMARY KEY,
     make VARCHAR(50),
     model VARCHAR(50),
     year INT,

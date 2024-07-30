@@ -18,13 +18,13 @@ router.post('/', async (req, res) => {
     try {
         if(DEBUG) console.log('auth.getLoginByUsername().try');
         let user = await getLoginByUsername(req.body.username);
-        if(DEBUG) console.log(`user data: ${user.username}`);
         if(user === undefined || user === null) {
             req.session.status = 'Incorrect user name was entered.'
             if(DEBUG) console.log(req.session.status);
             res.redirect('/auth');
             return;
         }
+        if(DEBUG) console.log(`user data: ${user.username}`);
         if( await bcrypt.compare(req.body.password, user.password)) {
             const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '3m' });
             if(DEBUG) {
@@ -39,14 +39,15 @@ router.post('/', async (req, res) => {
             res.redirect('/');
             return;
         } else {
+            myEventEmitter.emit('event', 'auth.post', 'INVALID', `Incorrect password was entered.`);
             req.session.status = 'Incorrect password was entered.'
             res.redirect('/auth')
             return;
         }
     } catch (error) {
+        if(DEBUG) console.log('auth.getLoginByUsername().catch.');
         console.log(error);
-        if(DEBUG) console.log('auth.getLoginByUsername().catch: ' + user.username);
-        // log this error to an error log file.
+        myEventEmitter.emit('event', 'auth.post', 'ERROR', `Server error: 503.`);
         res.render('503');
         return;
     }
@@ -78,9 +79,11 @@ router.post('/new', async (req, res) => {
                 }
                 
                 if (result.code === "23505") { // PostgreSQL unique violation
+                    myEventEmitter.emit('event', 'auth.post /new', 'INFO', `PostgreSQL unique violation: 23505`);
                     constraint = setConstraint(result.constraint);
-                } else if (result.code === 11000) { // MongoDB duplicate key error
+                } else if (result.code === 11000) { // MongoDB unique violation
                     if (DEBUG) console.log(result.errmsg);
+                    myEventEmitter.emit('event', 'auth.post /new', 'INFO', `MongoDB unique violation: 11000`);
                     const match = result.errmsg.match(/index: (\w+)/);
                     const indexName = match ? match[1] : 'unknown';
                     if (DEBUG) console.log(`Duplicate key error for index: ${indexName}`);
@@ -91,6 +94,7 @@ router.post('/new', async (req, res) => {
                 res.redirect('/auth/new')
                 return;
             } else {
+                myEventEmitter.emit('event', 'auth.post /new', 'INFO', `New account created.`);
                 req.session.status = 'New account created, please login.'
                 res.redirect('/auth');
                 return;
