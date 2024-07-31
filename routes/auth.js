@@ -26,13 +26,15 @@ router.post('/', async (req, res) => {
         }
         if(DEBUG) console.log(`user data: ${user.username}`);
         if( await bcrypt.compare(req.body.password, user.password)) {
-            const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '3m' });
+            const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '10m' });
             if(DEBUG) {
-                console.log(`curl -H "Authorization: Bearer ${token}" -X GET http://localhost:3000/api/auth/${user._id}`);
-                console.log(`curl -d "password=xxxxx" -H "Authorization: Bearer ${token}" -X POST http://localhost:3000/api/auth/${user._id}`);
-                console.log(`curl -H "Authorization: Bearer ${token}" -X DELETE http://localhost:3000/api/auth/${user._id}`);
+                console.log('\n');
+                console.log('Copy and paste the following curl command to test the API.');
+                console.log(`curl -H "Authorization: Bearer ${token}" -X GET http://localhost:3000/api/full/p/[keyword]`);
+                console.log('\n');
             }
             myEventEmitter.emit('event', 'auth.post', 'SUCCESS', `User ${user.username} logged in successfully.`);
+            if(DEBUG) console.log('auth.post.getLoginByUsername().try _id: ' + user._id);
             req.session.user = user;
             req.session.token = token;
             req.session.status = 'Happy for your return ' + user.username;

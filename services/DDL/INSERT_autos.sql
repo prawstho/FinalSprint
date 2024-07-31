@@ -1,4 +1,4 @@
-INSERT INTO automobiles (make, model, year, vin, description) VALUES
+INSERT INTO autos (make, model, year, vin, description) VALUES
 ('Tesla', 'Model 3', 2022, '5YJ3E1EA2MF123456', 'Sleek, electric, eco-friendly sedan for a sustainable future.'),
 ('Ford', 'Mustang', 2021, '1FA6P8TH1M5101234', 'Classic muscle car reinvented for modern thrills and nostalgia.'),
 ('Chevrolet', 'Bolt EV', 2023, '1G1FZ6S00P7101234', 'Affordable electric vehicle with impressive range and tech.'),
